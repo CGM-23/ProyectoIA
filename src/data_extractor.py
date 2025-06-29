@@ -37,8 +37,8 @@ def extract_data(ticker, start_date=None, end_date=None, interval='1d', output_d
     except Exception as e:
         print(f"Error al extraer datos para {ticker}: {e}")
 
-if __name__ == '__main__':
+if __name__ == '__main__': 
     # Extraer los datos para diferentes intervalos de tiempo
-    extract_data('BAP', interval='1d', output_dir=r'C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data') #data diaria
-    extract_data('BAP', interval='1wk', output_dir=r'C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data') #data semanal
-    extract_data('BAP', interval='1mo', output_dir=r'C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data') #data mensual
+    extract_data('BAP', '2020-01-30', interval='1d', output_dir=r'C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data') #data diaria
+    extract_data('BAP', '2010-12-01', interval='1wk', output_dir=r'C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data') #data semanal
+    extract_data('BAP', '1996-01-01', interval='1mo', output_dir=r'C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data') #data mensual

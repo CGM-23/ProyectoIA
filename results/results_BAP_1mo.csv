@@ -1,0 +1,2 @@
+input_file,best_params,R2,MSE
+C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data\preprocesed_normalizada\BAP_1mo.csv,"{""max_depth"": 10, ""max_features"": ""sqrt"", ""min_samples_leaf"": 2, ""min_samples_split"": 2, ""n_estimators"": 50}",0.8236229686085317,0.002952325447447971
