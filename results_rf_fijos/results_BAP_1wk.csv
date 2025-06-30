@@ -1,0 +1,2 @@
+input_file,params,R2,MSE
+C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data\preprocesed_normalizada\BAP_1wk.csv,"{""n_estimators"": 50, ""max_depth"": 20, ""min_samples_split"": 5, ""min_samples_leaf"": 2, ""max_features"": ""sqrt"", ""random_state"": 42}",0.9812011059438308,0.0004535503847065913

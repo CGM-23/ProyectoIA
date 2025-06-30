@@ -1,2 +1,2 @@
-input_file,best_params,R2,MSE
-C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data\preprocesed_normalizada\BAP_1mo.csv,"{""max_depth"": 10, ""max_features"": ""sqrt"", ""min_samples_leaf"": 2, ""min_samples_split"": 2, ""n_estimators"": 50}",0.8236229686085317,0.002952325447447971
+input_file,best_params,R2_test,MSE_test,R2_folds,R2_mean_cv,R2_std_cv
+C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data\preprocesed_normalizada\BAP_1mo.csv,"{""max_depth"": 20, ""max_features"": ""sqrt"", ""min_samples_leaf"": 1, ""min_samples_split"": 2, ""n_estimators"": 200}",0.8369440355252935,0.002729347860540838,"[0.8362895776271084, -0.9598634051608059, -0.13108419879187205, -2.499620444838259, -0.5996322806578684]",-0.6707821503643393,1.0950633639576177

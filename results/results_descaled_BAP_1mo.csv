@@ -1,0 +1,2 @@
+input_file,best_params,R2_test,MSE_test,MAE_test,MAPE_test,R2_folds,R2_mean_cv,R2_std_cv
+C:\Users\PC\Desktop\EJERCICIOS_PROGRA\python\ProyectoIA\data\preprocessed\descaled_BAP_1mo.csv,"{""max_depth"": 20, ""max_features"": ""sqrt"", ""min_samples_leaf"": 1, ""min_samples_split"": 2, ""n_estimators"": 50}",0.8378564380007221,146.4858692205952,9.49772049386161,6.5835973187758485,"[0.8378064168669932, -0.9641405689760367, -0.13984958366674283, -2.455769602135933, -0.6229556105510687]",-0.6689817896925577,1.0800221656735898

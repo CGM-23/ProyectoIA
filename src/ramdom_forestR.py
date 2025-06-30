@@ -1,17 +1,16 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_squared_error
+import numpy as np
 import os
 import json
 from joblib import dump
+
 def find_best_parameters(input_file, results_dir):
     """
-    Carga los datos preprocesados, busca los mejores parámetros y guarda los resultados en un CSV.
-    
-    Args:
-        input_file (str): Ruta al archivo CSV de datos preprocesados.
-        results_dir (str): Directorio donde guardar los resultados.
+    Carga los datos preprocesados, busca los mejores parámetros y guarda los resultados en un CSV usando validación cruzada temporal.
+    Imprime los R² de cada fold para el mejor modelo.
     """
     try:
         data = pd.read_csv(input_file, index_col=0, parse_dates=True)
@@ -26,25 +25,45 @@ def find_best_parameters(input_file, results_dir):
         X = data[features]
         y = data[target]
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42, shuffle=False
-        )
+        # División temporal: 80% entrenamiento, 20% prueba
+        train_size = int(0.8 * len(X))
+        X_train, X_test = X.iloc[:train_size], X.iloc[train_size:]
+        y_train, y_test = y.iloc[:train_size], y.iloc[train_size:]
+
+        # Definir validación cruzada temporal (no mezcla el pasado con el futuro)
+        tscv = TimeSeriesSplit(n_splits=5)
 
         param_grid = {
             'n_estimators': [50, 100, 200],
             'max_depth': [10, 20, None],
             'min_samples_split': [2, 5, 10],
             'min_samples_leaf': [1, 2, 4],
-            'max_features': ['auto', 'sqrt']
+            'max_features': ['sqrt']  # Usa 'sqrt' para regresión
         }
 
         rf = RandomForestRegressor(random_state=42)
-        grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5, n_jobs=-1, verbose=0)
+        grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=tscv, n_jobs=-1, verbose=0, scoring='r2')
         grid_search.fit(X_train, y_train)
 
         best_params = grid_search.best_params_
 
-        # Evaluar el modelo en el conjunto de prueba
+        # Extraer los R2 de cada split (fold) para el mejor modelo
+        best_index = grid_search.best_index_
+        split_test_scores = []
+        # cv_results_['split0_test_score'], etc., son arrays con la score para cada split y cada combinación de params
+        for i in range(tscv.get_n_splits()):
+            split_test_scores.append(grid_search.cv_results_[f'split{i}_test_score'][best_index])
+        
+        split_test_scores = np.array(split_test_scores)
+        promedio_r2 = split_test_scores.mean()
+        std_r2 = split_test_scores.std()
+        
+        print("\nResultados de Validación Cruzada (TimeSeriesSplit):")
+        for i, score in enumerate(split_test_scores):
+            print(f"Fold {i+1} - R²: {score:.4f}")
+        print(f"Promedio R²: {promedio_r2:.3f} ± {std_r2:.3f}\n")
+
+        # Evaluar el modelo en el conjunto de prueba (20% más reciente)
         best_model = grid_search.best_estimator_
         y_pred = best_model.predict(X_test)
         r2 = r2_score(y_test, y_pred)
@@ -63,15 +82,17 @@ def find_best_parameters(input_file, results_dir):
         result_dict = {
             'input_file': input_file,
             'best_params': json.dumps(best_params),
-            'R2': r2,
-            'MSE': mse
+            'R2_test': r2,
+            'MSE_test': mse,
+            'R2_folds': json.dumps(split_test_scores.tolist()),
+            'R2_mean_cv': promedio_r2,
+            'R2_std_cv': std_r2
         }
         results_df = pd.DataFrame([result_dict])
         results_df.to_csv(result_file, index=False)
         print(f"Resultados guardados en {result_file}")
 
-        # (Opcional) Guardar el modelo entrenado
-
+        # Guardar el modelo entrenado
         model_file = os.path.join(results_dir, f"best_model_{os.path.basename(input_file).replace('.csv','')}.joblib")
         dump(best_model, model_file)
         print(f"Modelo guardado en {model_file}")
